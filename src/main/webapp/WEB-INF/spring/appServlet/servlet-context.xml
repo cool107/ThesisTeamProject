@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+	xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	  <!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+   
+   <!-- Enables the Spring MVC @Controller programming model -->
+   <annotation-driven />
+
+   <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+   <resources mapping="/resources/**" location="/resources/" />
+   <resources mapping="/img/**" location="/img/" /> 
+   
+   <!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+   <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+      <beans:property name="prefix" value="/WEB-INF/views/" />
+      <beans:property name="suffix" value=".jsp" />
+   </beans:bean>
+   
+   <context:component-scan base-package="global.dclass.team5" />
+   
+   <beans:bean id="LoginInterceptor"
+	class="global.dclass.team5.interceptor.LoginInterceptor"></beans:bean>
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/insertApplicationForm" />
+			<mvc:mapping path="/insertThesis" />
+			<mvc:mapping path="/updateThesis" />
+			<mvc:mapping path="/finalSubmit" />
+			<mvc:mapping path="/thesisDetail" />
+			<mvc:mapping path="/insertThesisSubmit" />
+			<mvc:mapping path="/all_Every_Calendar" />
+			<mvc:mapping path="/chatForm" />
+			<mvc:mapping path="/goEveryBoard" />
+			<mvc:mapping path="/everyBoard" />
+			<mvc:mapping path="/everyBoardDetail" />
+			<mvc:mapping path="/insertEveryBoard" />
+			<mvc:mapping path="/updateEveryBoard" />
+			<mvc:mapping path="/deleteEveryBoard" />
+			<mvc:mapping path="/logoutMember" />
+			<mvc:mapping path="/mypage" />
+			<mvc:mapping path="/updateMember" />
+			<mvc:mapping path="/applicationForm" />
+			<mvc:mapping path="/insertApplication" />
+			<mvc:mapping path="/search_bar" />
+			<mvc:mapping path="/goSearchForm" />
+			<mvc:mapping path="/goUniversityThesisForm" />
+			<mvc:mapping path="/goSelectSearchForm" />
+			<mvc:mapping path="/searchList_form" />
+			<mvc:mapping path="/search_read_only" />
+			<mvc:mapping path="/searchThesisDetail" />
+			<mvc:mapping path="/thesisDownload" />
+			<mvc:mapping path="/selectFiveMessages" />
+			<mvc:mapping path="/viewAllMessages" />
+			<mvc:mapping path="/entergetMsg" />
+			<mvc:mapping path="/popup" />
+			<mvc:mapping path="/goGroupBoardLogin" />
+			<mvc:mapping path="/goGroupBoard" />
+			<mvc:mapping path="/loginGroupBoard" />
+			<mvc:mapping path="/groupBoard_write" />
+			<mvc:mapping path="/groupBoard_hit" />
+			<mvc:mapping path="/groupboard_list" />
+			<mvc:mapping path="/groupBoard_read" />
+			<mvc:mapping path="/groupBoard_delete" />
+			<mvc:mapping path="/groupBoard_download" />
+			<mvc:mapping path="/groupBoard_edit" />
+			<mvc:mapping path="/goGroupBoardCalendar" />
+			<mvc:mapping path="/similarity_form" />
+			<mvc:mapping path="/similarity_read" />
+			<mvc:mapping path="/wordCheck" />
+			<mvc:mapping path="/thesisWrite" />
+			<beans:ref bean="LoginInterceptor" />
+      </mvc:interceptor>
+   </mvc:interceptors>
+
+</beans:beans>

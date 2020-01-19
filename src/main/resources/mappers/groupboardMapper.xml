@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="global.dclass.team5.DAO.GroupBoardMapper">
+
+	<insert id="insertGroupBoardInfo" parameterType="GroupBoardInfo">
+		INSERT INTO GROUPBOARDINFO(GROUPBOARDNUM, GROUPBOARDID, GROUPBOARDPW) 
+		VALUES (#{groupBoardNum}, #{groupBoardId}, #{groupBoardPw})
+	</insert>
+	
+	<select id="selectGroupBoardInfo" parameterType="String" resultType="GroupBoardInfo">
+		SELECT GROUPBOARDNUM, GROUPBOARDID, GROUPBOARDPW
+		FROM GROUPBOARDINFO
+		WHERE GROUPBOARDID = #{groupBoardId}
+	</select>
+	
+	<insert id="insertBoard" parameterType="GroupBoard">
+		insert into GroupBoard (
+			groupBoardNum
+			, groupBoardSeq
+			, groupBoardId
+			, groupBoardTitle
+			, groupBoardContent
+			<if test="orgname != null and savename != null">
+			, orgname
+			, savename
+			</if>
+		)
+		values (
+			#{groupBoardNum}
+			, GROUPBOARDSEQ.nextval
+			, #{groupBoardId}
+			, #{groupBoardTitle}
+			, #{groupBoardContent}
+			<if test="orgname != null and savename != null">
+			, #{orgname}
+			, #{savename}
+			</if>
+		)
+	</insert>
+	
+	<select id="getBoard" parameterType="GroupBoard" resultType="GroupBoard">
+		select 
+			groupBoardNum
+			,groupBoardSeq
+			,groupBoardId
+			,groupBoardTitle
+			,groupBoardContent
+			,to_char(groupBoardDate, 'YYYY-MM-DD HH24:MI:SS') groupBoardDate
+			,groupBoardHitcount
+			,orgname
+			,savename
+		from 
+			GroupBoard
+		where 
+			groupBoardNum = #{groupBoardNum}
+			and groupBoardSeq=#{groupBoardSeq}
+	</select>
+	
+	<update id="addHits" parameterType="GroupBoard">
+		update
+			GroupBoard
+		set
+			groupBoardHitcount = groupBoardHitcount + 1
+		where
+			groupBoardNum = #{groupBoardNum}
+			and groupBoardSeq=#{groupBoardSeq}
+	</update>
+	
+	<select id="listBoard" parameterType="map" resultType="GroupBoard">
+		select 
+			groupBoardNum
+			, groupBoardSeq
+			, groupBoardId
+			, groupBoardTitle
+			, groupBoardContent
+			, to_char(groupBoardDate, 'YYYY-MM-DD') groupBoardDate
+			, groupBoardHitcount
+			,(select count(*) from GroupBoardComments where groupBoardSeq=g.groupBoardSeq) as recount
+			, orgname
+			, savename
+		from 
+			GroupBoard g
+		where 
+			g.groupBoardNum = #{groupBoardNum}
+			<choose>
+				<when test="keyField == 'groupBoardTitle'">and groupBoardTitle LIKE '%' || #{keyWord} || '%'</when>
+				<when test="keyField == 'groupBoardId'">and groupBoardId LIKE '%' || #{keyWord} || '%'</when>
+				<when test="keyField == 'groupBoardContent'">and groupBoardContent LIKE '%' || #{keyWord} || '%'</when>
+			</choose>
+		order by groupBoardSeq desc
+	</select>
+
+
+	<delete id="deleteBoard" parameterType="GroupBoard">
+		delete
+		from
+			GroupBoard
+		where
+			groupBoardNum = #{groupBoardNum}
+			and groupBoardSeq = #{groupBoardSeq}
+			
+	</delete>
+
+	<update id="updateBoard" parameterType="GroupBoard">
+		update
+			GroupBoard
+		set
+			groupBoardTitle = #{groupBoardTitle}
+			, groupBoardContent = #{groupBoardContent}
+			<if test="orgname != null and savename != null">
+			, orgname = #{orgname}
+			, savename = #{savename}
+			</if>
+		where
+			groupBoardNum = #{groupBoardNum}
+			and groupBoardSeq = #{groupBoardSeq}
+	</update>
+	
+	<insert id="insertReply" parameterType="GroupBoardComments">				
+		insert into GroupBoardComments(			
+			groupBoardNum
+			,groupBoardCommentSeq		
+			, groupBoardSeq		
+			, gbcid
+			, groupBoardComment
+		) values (			
+			#{groupBoardNum}
+			,GROUPBOARDCOMMENTSEQ.nextval		
+			, #{groupBoardSeq}		
+			, #{gbcid}		
+			, #{groupBoardComment}		
+		)		
+	</insert>
+	
+	<select id="listReply" parameterType="GroupBoardComments" resultType="GroupBoardComments">					
+		select				
+			groupBoardNum			
+			, groupBoardCommentSeq			
+			, groupBoardSeq
+			, gbcid		
+			, groupBoardComment			
+			, to_char(groupBoardCommentDate, 'YYYY-mm-dd hh:mi') groupBoardCommentDate			
+		from				
+			GroupBoardComments			
+		where				
+			groupBoardNum = #{groupBoardNum}	
+			and groupBoardSeq=#{groupBoardSeq}
+		order by groupBoardCommentSeq desc				
+	</select>
+		
+	<select id="selectReply" parameterType="GroupBoardComments" resultType="GroupBoardComments">					
+		select				
+			groupBoardNum			
+			,groupBoardCommentSeq
+			,groupBoardSeq			
+			, id			
+			, text			
+			, to_char(groupBoardCommentDate, 'mm-dd hh:mi:ss') groupBoardCommentDate			
+		from				
+			GroupBoardComments			
+		where				
+			groupBoardNum = #{groupBoardNum}
+			and groupBoardCommentSeq=#{groupBoardCommentSeq}
+			and	groupBoardSeq=#{groupBoardSeq}	
+	</select>
+									
+	<update id="updateReply" parameterType="GroupBoardComments">					
+		update				
+			GroupBoardComments
+		set				
+			groupBoardComment = #{groupBoardComment}	
+		where				
+			groupBoardCommentSeq = #{groupBoardCommentSeq}		
+			and groupBoardSeq=#{groupBoardSeq}
+			and groupBoardNum=#{groupBoardNum}
+	</update>
+						
+	<delete id="deleteReply" parameterType="GroupBoardComments">				
+		delete			
+		from			
+			GroupBoardComments		
+		where			
+			groupBoardCommentSeq = #{groupBoardCommentSeq}		
+			and groupBoardSeq=#{groupBoardSeq}
+			and groupBoardNum=#{groupBoardNum}
+
+	</delete>
+	
+	<select id="getTotal" parameterType="map" resultType="int">					
+		select				
+			count(*)			
+		from				
+			GroupBoard
+		WHERE
+    		GROUPBOARDNUM = #{groupBoardNum}		
+			<choose>
+				<when test="keyField == 'groupBoardTitle'">and groupBoardTitle LIKE '%' || #{keyWord} || '%'</when>
+				<when test="keyField == 'groupBoardId'">and groupBoardId LIKE '%' || #{keyWord} || '%'</when>
+				<when test="keyField == 'groupBoardContent'">and groupBoardContent LIKE '%' || #{keyWord} || '%'</when>
+			</choose>
+	</select>
+	
+	<insert id = "insertThesisTemp" parameterType = "ThesisTemp">
+	insert into thesistemp (
+	SEQ_THESISTEMP
+	,GROUPBOARDNUM
+	,THESISTITLE
+	,THESISABSTRACT
+	,EDITOR
+	,TEAMNAME
+	,DEPARTMENT
+	,DEGREE
+	) values (
+	SEQ_THESISTEMP.NEXTVAL
+	,#{groupBoardNum}
+	,#{thesisTitle}
+	,#{thesisAbstract}
+	,#{editor}
+	,#{teamName}
+	,#{department}
+	,#{degree}
+	)
+	</insert>
+	
+	<select id = "selectThesisTemp" resultType = "thesisTemp" parameterType = "int">
+		SELECT
+			seq_thesistemp
+			,thesistitle
+			,thesisabstract
+			,editor
+			,groupboardnum
+			,thesistempdate
+  		FROM
+  			thesistemp aa
+  			, (
+        		SELECT 
+        			max(thesistempdate) as d 
+        		from 
+        			thesistemp 
+        			group by 
+        			groupboardnum
+        	) bb
+ 		WHERE 
+ 			aa.groupboardnum = #{groupboardnum} 
+ 		AND 
+ 			aa.THESISTEMPDATE = bb.d
+	
+	</select>
+	
+	<update id="groupFileDelete" parameterType="GroupBoard">
+		UPDATE GROUPBOARD 
+		SET ORGNAME = null, SAVENAME = null
+		WHERE GROUPBOARDSEQ = #{groupBoardSeq} AND GROUPBOARDNUM = #{groupBoardNum}
+	</update>
+	
+</mapper>

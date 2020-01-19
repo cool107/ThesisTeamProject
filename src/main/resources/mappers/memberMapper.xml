@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="global.dclass.team5.DAO.MemberMapper">
+	<insert id="insertMember" parameterType="Member">
+		INSERT INTO MEMBER(ID, PW, NAME, DEPARTMENT, DIVISION) 
+		VALUES (#{id}, #{pw}, #{name}, #{department}, '学生')
+	</insert>
+	
+	<select id="selectMember" parameterType="String" resultType="Member">
+		SELECT ID, PW, NAME, DEPARTMENT,DIVISION, INDATE, GROUPBOARDNUM
+		FROM MEMBER
+		WHERE ID =  #{id}
+	</select>
+	
+	<update id="updateMember" parameterType="Member">
+		UPDATE MEMBER
+		SET 
+			PW =#{pw},
+			DEPARTMENT=#{department}
+		WHERE ID=#{id}
+	</update>
+	
+	<insert id="insertApplication" parameterType="Application">
+		INSERT INTO APPLICATION(APPLICATIONSEQ, ID, MEMBER1, MEMBER2, MEMBER3, MEMBER4, MEMBERNUM)
+		VALUES (APPLICATIONSEQ.NEXTVAL, #{id}, #{member1}, #{member2}, #{member3}, #{member4}, #{memberNum})
+	</insert>
+	
+	<select id="selectApplication" parameterType="String" resultType="Application">
+		SELECT APPLICATIONSEQ, ID, MEMBER1, MEMBER2, MEMBER3, MEMBER4, MEMBERNUM,  MEMBERCHECK, ADMINCHECK, APPLICATIONDATE
+		FROM APPLICATION
+		WHERE ID = #{id}
+	</select>
+	
+	<insert id="sendConfirmMessage" parameterType="Message">
+		INSERT INTO MESSAGE(TOID, FROMID, MESSAGECONTENT, APPLICATIONSEQ, MSG_SEQ) 
+		VALUES (#{toId}, '管理者', #{messageContent}, #{applicationSeq}, MSG_SEQ.NEXTVAL)
+	</insert>
+	
+	<update id="updateGroupBoardNum" parameterType="Application">
+		UPDATE MEMBER
+		SET	GROUPBOARDNUM = #{applicationSeq}
+		WHERE ID IN (#{id}, #{member1}
+		<if test="memberNum == 3">
+			, #{member2}	
+		</if>
+		<if test="memberNum == 4">
+			, #{member2}, #{member3}	
+		</if>
+		<if test="memberNum == 5">
+			, #{member2}, #{member3}, #{member4}	
+		</if>
+		)
+	</update>
+	
+	<select id="selectMsgCount" parameterType="String" resultType="int">
+		SELECT	COUNT(*)
+		FROM MESSAGE
+		WHERE MESSAGECHECK = 0 AND TOID = #{toId}
+	</select>
+	
+	<select id="selectTeamMember" parameterType="int" resultType="Member">
+		SELECT NAME
+		FROM MEMBER
+		WHERE GROUPBOARDNUM = #{groupBoardNum}
+	</select>
+</mapper>

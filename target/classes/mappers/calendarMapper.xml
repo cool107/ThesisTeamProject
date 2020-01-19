@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="global.dclass.team5.DAO.CalendarMapper">
+
+<!-- 전체출력 -->
+<select id="all_Group_Calendar" resultType="GroupCalendar" parameterType="int">
+	SELECT
+	    GROUP_CALENDAR_NUM, GROUPBOARDNUM, ID, DEPARTMENT, SCHDULE_TITLE, TO_CHAR(start_day,'YYYY"年"MM"月"DD"日"') as start_day, TO_CHAR(LAST_DAY,'YYYY"年"MM"月"DD"日"') as last_day, PLACE, DISCRIPTION
+	FROM
+	    GROUP_CALENDAR
+	WHERE
+	    GROUPBOARDNUM =  #{groupBoardNum}   
+	ORDER BY
+	    START_DAY, LAST_DAY
+</select>
+
+<!-- 선택된 달 출력 -->
+<select id="selected_Group_Calendar" resultType="GroupCalendar" parameterType="Member">
+	SELECT
+	    GROUP_CALENDAR_NUM, GROUPBOARDNUM, ID, DEPARTMENT, SCHDULE_TITLE, 
+	    TO_CHAR(start_day,'YYYY"年"MM"月"DD"日"') as start_day, 
+	    TO_CHAR(LAST_DAY,'YYYY"年"MM"月"DD"日"') as last_day, PLACE, DISCRIPTION
+	FROM
+	    GROUP_CALENDAR
+	WHERE
+	    GROUPBOARDNUM = #{groupBoardNum}    
+	AND
+		 TO_CHAR(start_day,'YYYYMM') like '%' || #{start_day} || '%'
+	ORDER BY START_DAY, LAST_DAY
+
+</select>
+
+
+<select id="select_Group_calendar_update" parameterType="GroupCalendar" resultType="GroupCalendar">
+	SELECT
+	  GROUP_CALENDAR_NUM, ID, DEPARTMENT, SCHDULE_TITLE, 
+	  TO_CHAR(start_day,'YYYY-MM-DD') as start_day, 
+	  TO_CHAR(last_day,'YYYY-MM-DD') as last_day, 
+	  PLACE,
+	  DISCRIPTION
+	FROM
+	    GROUP_CALENDAR
+	WHERE 
+		GROUP_CALENDAR_NUM = #{group_calendar_num}
+	AND
+		GROUPBOARDNUM = #{groupBoardNum}    
+</select>
+
+ <insert id="insert_Group_calendar" parameterType="GroupCalendar">
+	INSERT INTO GROUP_CALENDAR(
+	    GROUP_CALENDAR_NUM,
+	    GROUPBOARDNUM,
+	    ID,
+	    DEPARTMENT,
+	    SCHDULE_TITLE,
+	    START_DAY,
+	    LAST_DAY,
+	    PLACE,
+	    DISCRIPTION
+	)VALUES(
+	    GROUP_CALENDAR_SEQ.NEXTVAL,
+	    #{groupBoardNum},
+	   	#{id},
+	    #{department},
+	    #{schdule_title},
+	    TO_DATE(#{start_day},'yyyy-mm-dd'),
+	    TO_DATE(#{last_day},'yyyy-mm-dd'),
+	    #{place},
+	    #{discription}
+	)
+</insert> 
+
+<delete id="delete_Group_calendar" parameterType="GroupCalendar">
+	delete GROUP_CALENDAR
+	where
+		GROUP_CALENDAR_NUM=#{group_calendar_num}
+	and 
+		groupBoardNum=#{groupBoardNum}
+</delete>
+
+<update id="update_Group_calendar" parameterType="GroupCalendar">
+	update GROUP_CALENDAR
+	set 
+		SCHDULE_TITLE = #{schdule_title}
+		,START_DAY = #{start_day}
+		,LAST_DAY = #{last_day}
+		,PLACE = #{place}
+		,DISCRIPTION = #{discription}
+	where
+		 GROUPBOARDNUM = #{groupBoardNum}
+	and 
+		GROUP_CALENDAR_NUM = #{group_calendar_num}
+</update>
+
+
+<!-- 전체 게시판 시작-->
+
+
+<!-- 전체출력 -->
+<select id="all_Every_Calendar" resultType="Calendar">
+	SELECT
+	   CALENDAR_NUM, ID, DEPARTMENT, SCHDULE_TITLE, TO_CHAR(start_day,'YYYY"年"MM"月"DD"日"') as start_day, TO_CHAR(LAST_DAY,'YYYY"年"MM"月"DD"日"') as last_day, PLACE, DISCRIPTION
+	FROM
+	    CALENDAR  
+	ORDER BY
+	    START_DAY, LAST_DAY
+</select>
+
+<!-- 선택된 달 출력 -->
+<select id="selected_Every_Calendar" resultType="Calendar">
+	SELECT
+	   CALENDAR_NUM, ID, DEPARTMENT, SCHDULE_TITLE, TO_CHAR(start_day,'YYYY"年"MM"月"DD"日"') as start_day, TO_CHAR(LAST_DAY,'YYYY"年"MM"月"DD"日"') as last_day, PLACE, DISCRIPTION
+	FROM
+	   CALENDAR 
+	WHERE
+		 TO_CHAR(start_day,'YYYYMM') like '%' || #{start_day} || '%'
+	ORDER BY START_DAY, LAST_DAY
+</select>
+
+<select id="select_Every_calendar_update" resultType="Calendar">
+	SELECT
+	   CALENDAR_NUM, ID, DEPARTMENT, SCHDULE_TITLE, TO_CHAR(start_day,'yyyy-mm-dd') as start_day, TO_CHAR(last_day,'yyyy-mm-dd') as last_day, PLACE, DISCRIPTION
+	FROM
+	   CALENDAR 
+	WHERE 
+		CALENDAR_NUM = #{calendar_num}
+</select>
+
+<insert id="insert_Every_Calendar" parameterType="Calendar">
+	INSERT INTO CALENDAR(
+	    CALENDAR_NUM,
+	    ID,
+	    DEPARTMENT,
+	    SCHDULE_TITLE,
+	    START_DAY,
+	    LAST_DAY,
+	    PLACE,
+	    DISCRIPTION
+	)VALUES(
+	    CALENDAR_SEQ.NEXTVAL,
+	   	#{id},
+	    #{department},
+	    #{schdule_title},
+	    TO_DATE(#{start_day},'yyyy/mm/dd'),
+	    TO_DATE(#{last_day},'yyyy/mm/dd'),
+	    #{place},
+	    #{discription}
+	)
+</insert> 
+
+<delete id="delete_Every_calendar" parameterType="int">
+	delete CALENDAR
+	where
+		 CALENDAR_NUM=#{calendar_num}
+</delete>
+
+
+<update id="update_Every_calendar" parameterType="Calendar">
+	update CALENDAR
+		set 
+		SCHDULE_TITLE = #{schdule_title}
+		,START_DAY = #{start_day}
+		,LAST_DAY = #{last_day}
+		,PLACE = #{place}
+		,DISCRIPTION = #{discription}
+	where CALENDAR_NUM = #{calendar_num}
+</update>
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="Member" type="global.dclass.team5.VO.Member"/>
+		<typeAlias alias="Application" type="global.dclass.team5.VO.Application"/>
+		<typeAlias alias="Message" type="global.dclass.team5.VO.Message"/>
+		<typeAlias alias="Calendar" type="global.dclass.team5.VO.Calendar"/>
+		<typeAlias alias="GroupCalendar" type="global.dclass.team5.VO.GroupCalendar"/>
+		<typeAlias alias="GroupBoardInfo" type="global.dclass.team5.VO.GroupBoardInfo"/>
+		<typeAlias alias="GroupBoard" type="global.dclass.team5.VO.GroupBoard"/>
+		<typeAlias alias="GroupBoardComments" type="global.dclass.team5.VO.GroupBoardComments"/>
+		<typeAlias alias="EveryBoard" type="global.dclass.team5.VO.EveryBoard"/>
+		<typeAlias alias="EveryBoardComments" type="global.dclass.team5.VO.EveryBoardComments"/>
+		<typeAlias alias="Progress" type="global.dclass.team5.VO.Progress"/>
+		<typeAlias alias="Thesis" type="global.dclass.team5.VO.Thesis"/>
+		<typeAlias alias="ThesisForm" type="global.dclass.team5.VO.ThesisForm"/>
+		<typeAlias alias="ThesisTemp" type="global.dclass.team5.VO.ThesisTemp"/>
+	</typeAliases>
+	<mappers>
+		<mapper resource="mappers/memberMapper.xml" />
+		<mapper resource="mappers/adminMapper.xml" />
+		<mapper resource="mappers/messageMapper.xml"/>
+		<mapper resource="mappers/calendarMapper.xml"/>
+		<mapper resource="mappers/groupboardMapper.xml" />
+		<mapper resource="mappers/everyboardMapper.xml" />
+		<mapper resource="mappers/progressMapper.xml"/>
+		<mapper resource="mappers/searchMapper.xml"/>
+	</mappers>
+</configuration>

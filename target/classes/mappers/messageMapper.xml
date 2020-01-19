@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="global.dclass.team5.DAO.MessageMapper">
+<!-- 날짜순 메시지 셀렉트 -->
+<select id="select_all_messages" resultType = "Message">
+SELECT
+	toId
+	,fromId
+	,messageContent
+	,messageIndate
+	,messageCheck
+	,applicationSeq
+	,confirm
+	,msg_seq
+FROM 
+	MESSAGE 
+WHERE
+   TOID = #{toId}
+order by 
+	messageIndate desc
+</select>
+
+<select id="select_five_messages" parameterType="String" resultType = "Message">
+<![CDATA[
+SELECT
+	toId
+	,fromId
+	,messageContent
+	,messageIndate
+	,messageCheck
+	,applicationSeq
+	,confirm
+	,msg_seq
+FROM 
+	MESSAGE 
+WHERE
+    TOID = #{toId} AND ROWNUM <= 5 AND MESSAGECHECK = 0
+order by 
+	messageIndate desc
+	]]>
+</select>
+<!-- 메세지 삭제 -->
+<delete id = "delete_messages" parameterType = "int">
+delete
+	MESSAGE
+where
+	msg_seq = #{msg_seq}
+
+</delete>
+<!-- 메시지 1개  출력  -->
+<select id = "select_one_messages" resultType = "Message" >
+SELECT
+	toId
+	,fromId
+	,messageContent
+	,messageIndate
+	,messageCheck
+	,applicationSeq
+	,confirm
+	,msg_seq
+FROM 
+	MESSAGE 
+WHERE 
+	msg_seq = #{msg_seq}
+</select>
+<!-- 메시지 보내기 -->
+<insert id = "insert_messages" parameterType = "Message">
+insert into MESSAGE(
+	 toId
+	,fromId
+	,messageContent
+	,messageIndate
+	,messageCheck
+	,applicationSeq
+	,confirm
+	,msg_seq
+) values (
+	#{toId}
+	,#{fromId}
+	,#{messageContent}
+	,sysdate
+	,#{messageCheck}
+	,#{applicationSeq}
+	,#{confirm}
+	,msg_seq.nextval
+)
+
+</insert>
+
+	<update id="updateConfirm" parameterType="Message">
+		UPDATE MESSAGE
+		SET CONFIRM = 1, MESSAGECHECK = 1
+		WHERE APPLICATIONSEQ = #{applicationSeq} AND TOID = #{toId}
+	</update>
+	
+	<update id="updateMessageCheck" parameterType="int">
+		UPDATE MESSAGE
+		SET MESSAGECHECK = 1
+		WHERE MSG_SEQ = #{msg_seq}
+	</update>
+	
+	<select id="fromAllMessage" parameterType="String" resultType="Message">
+		SELECT
+   			TOID, FROMID, MESSAGECONTENT, MESSAGEINDATE, MESSAGECHECK, APPLICATIONSEQ, CONFIRM, MSG_SEQ
+		FROM
+		    MESSAGE
+		WHERE
+		    FROMID = #{fromId}
+		ORDER BY
+		    MESSAGEINDATE
+	</select>
+</mapper>

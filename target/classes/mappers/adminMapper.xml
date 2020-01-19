@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="global.dclass.team5.DAO.AdminMapper">
+	<select id="searchApplication" resultType="Application">
+		SELECT APPLICATIONSEQ, ID, MEMBER1, MEMBER2, MEMBER3, MEMBER4, MEMBERNUM, MEMBERCHECK, ADMINCHECK
+		FROM APPLICATION
+		WHERE ADMINCHECK != 1
+		ORDER BY APPLICATIONDATE
+	</select>
+	
+	<select id="selectApplication" parameterType="int" resultType="Application">
+		SELECT APPLICATIONSEQ, ID, MEMBER1, MEMBER2, MEMBER3, MEMBER4, MEMBERNUM, MEMBERCHECK, ADMINCHECK
+		FROM APPLICATION
+		WHERE ADMINCHECK != 1 AND APPLICATIONSEQ = #{applicationSeq}
+	</select>
+	
+	<update id="updateMemberCheck" parameterType="int">
+		UPDATE APPLICATION 
+		SET MEMBERCHECK = MEMBERCHECK+1
+		WHERE APPLICATIONSEQ = #{applicationSeq}
+	</update>
+	
+	<update id="updateAdminCheck" parameterType="int">
+		UPDATE APPLICATION 
+		SET ADMINCHECK = 1
+		WHERE APPLICATIONSEQ = #{applicationSeq}
+	</update>
+	
+	<select id="selectThesisForm" parameterType="String" resultType="ThesisForm">
+		SELECT DEPARTMENT, THESISFORM
+		FROM	THESISFORM
+		WHERE DEPARTMENT = #{department}
+	</select>
+	
+	<update id="updateThesisForm" parameterType="ThesisForm">
+		UPDATE THESISFORM 
+		SET THESISFORM = #{thesisForm}
+		WHERE DEPARTMENT = #{department}
+	</update>
+	
+	<update id="finalFileUpload" parameterType="ThesisTemp">
+	UPDATE
+		THESISTEMP
+	SET 
+		THESISORGNAME = #{thesisorgname}
+		, THESISSAVENAME = #{thesissavename}
+		, SUBMIT = 1
+	WHERE
+		SEQ_THESISTEMP = #{seq_thesistemp} AND GROUPBOARDNUM = #{groupBoardNum}
+	</update>
+	
+	<select id="selectThesisTemp" resultType="ThesisTemp">
+		SELECT SEQ_THESISTEMP, THESISTITLE, THESISABSTRACT, EDITOR, GROUPBOARDNUM, THESISTEMPDATE, THESISORGNAME, THESISSAVENAME, SUBMIT, TEAMNAME, DEPARTMENT, DEGREE, THESISCOMPLETE
+		FROM THESISTEMP
+		WHERE SUBMIT = 1 AND THESISCOMPLETE = 0
+	</select>
+	
+	<select id="oneThesisTemp" parameterType="int" resultType="ThesisTemp">
+		SELECT SEQ_THESISTEMP, THESISTITLE, THESISABSTRACT, EDITOR, GROUPBOARDNUM, THESISTEMPDATE, THESISORGNAME, THESISSAVENAME, SUBMIT, TEAMNAME, DEPARTMENT, DEGREE, THESISCOMPLETE
+		FROM THESISTEMP
+		WHERE SEQ_THESISTEMP = #{seq_thesistemp}
+	</select>
+	
+ 	<insert id="insertThesisSubmit" parameterType="ThesisTemp">
+		INSERT INTO THESIS(THESISSEQ, THESISTITLE, THESISAUTHOR, THESISABSTRACT, THESISORGNAME, THESISSAVENAME, DEPARTMENT, DEGREE) 
+		VALUES (THESISSEQ.NEXTVAL, #{thesisTitle}, #{teamName}, #{thesisAbstract}, #{thesisorgname}, #{thesissavename}, #{department}, #{degree})
+	</insert>
+	
+	<update id="updateThesisSubmit" parameterType="int">
+		UPDATE THESISTEMP
+		SET THESISCOMPLETE = 1
+		WHERE SEQ_THESISTEMP = #{seq_thesistemp}
+	</update>
+</mapper>

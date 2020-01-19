@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="global.dclass.team5.DAO.SearchMapper">
+	<select id="searchUniversityThesis" parameterType="Map" resultType="Thesis">
+		SELECT THESISSEQ, THESISTITLE, THESISAUTHOR, to_char(THESISDATE, 'YYYY-MM-DD') THESISDATE, THESISABSTRACT, THESISLINK, THESISORGNAME, THESISSAVENAME, DEPARTMENT, DEGREE
+		FROM THESIS
+		WHERE
+		<if test="department != '' and year != '' and degree != ''">
+			DEPARTMENT = #{department}	
+			AND <choose>
+						<when test="year == '2014 ~'"><![CDATA[THESISDATE >= '2014-01-01']]></when>
+						<when test="year == '2008 ~ 2013'"><![CDATA[THESISDATE BETWEEN '2008-01-01' AND '2013-12-31']]></when>
+						<when test="year == '2002 ~ 2007'"><![CDATA[THESISDATE BETWEEN '2002-01-01' AND '2007-12-31']]></when>
+						<when test="year == '1997 ~ 2001'"><![CDATA[THESISDATE BETWEEN '1997-01-01' AND '2001-12-31']]></when>
+						<when test="year == '~ 1996'"><![CDATA[THESISDATE <= '1996-12-31']]></when>
+					</choose>
+			AND DEGREE = #{degree}
+		</if>
+		<if test="department != '' and year == '' and degree == ''">
+			DEPARTMENT = #{department}	
+		</if>
+		<if test="department == '' and year != '' and degree == ''">
+			<choose>
+				<when test="year == '2014 ~'"><![CDATA[THESISDATE >= '2014-01-01']]></when>
+				<when test="year == '2008 ~ 2013'"><![CDATA[THESISDATE BETWEEN '2008-01-01' AND '2013-12-31']]></when>
+				<when test="year == '2002 ~ 2007'"><![CDATA[THESISDATE BETWEEN '2002-01-01' AND '2007-12-31']]></when>
+				<when test="year == '1997 ~ 2001'"><![CDATA[THESISDATE BETWEEN '1997-01-01' AND '2001-12-31']]></when>
+				<when test="year == '~ 1996'"><![CDATA[THESISDATE <= '1996-12-31']]></when>
+			</choose>
+		</if>
+		<if test="department == '' and year == '' and degree != ''">
+			DEGREE = #{degree}
+		</if>
+		<if test="department != '' and year != '' and degree == ''">
+			DEPARTMENT = #{department}	
+			AND <choose>
+						<when test="year == '2014 ~'"><![CDATA[THESISDATE >= '2014-01-01']]></when>
+						<when test="year == '2008 ~ 2013'"><![CDATA[THESISDATE BETWEEN '2008-01-01' AND '2013-12-31']]></when>
+						<when test="year == '2002 ~ 2007'"><![CDATA[THESISDATE BETWEEN '2002-01-01' AND '2007-12-31']]></when>
+						<when test="year == '1997 ~ 2001'"><![CDATA[THESISDATE BETWEEN '1997-01-01' AND '2001-12-31']]></when>
+						<when test="year == '~ 1996'"><![CDATA[THESISDATE <= '1996-12-31']]></when>
+					</choose>
+		</if>
+		<if test="department == '' and year != '' and degree != ''">
+			<choose>
+						<when test="year == '2014 ~'"><![CDATA[THESISDATE >= '2014-01-01']]></when>
+						<when test="year == '2008 ~ 2013'"><![CDATA[THESISDATE BETWEEN '2008-01-01' AND '2013-12-31']]></when>
+						<when test="year == '2002 ~ 2007'"><![CDATA[THESISDATE BETWEEN '2002-01-01' AND '2007-12-31']]></when>
+						<when test="year == '1997 ~ 2001'"><![CDATA[THESISDATE BETWEEN '1997-01-01' AND '2001-12-31']]></when>
+						<when test="year == '~ 1996'"><![CDATA[THESISDATE <= '1996-12-31']]></when>
+					</choose>
+			AND DEGREE = #{degree}
+		</if>
+		<if test="department != '' and year == '' and degree != ''">
+			DEPARTMENT = #{department}	
+			AND DEGREE = #{degree}
+		</if>
+		ORDER BY THESISDATE
+	</select>
+	
+	<select id="selectThesis" parameterType="int" resultType="Thesis">
+		SELECT THESISSEQ, THESISTITLE, THESISAUTHOR, to_char(THESISDATE, 'YYYY-MM-DD') THESISDATE, THESISABSTRACT, THESISLINK, THESISORGNAME, THESISSAVENAME, DEPARTMENT, DEGREE
+		FROM THESIS
+        WHERE THESISSEQ = #{thesisSeq}
+	</select>
+</mapper>

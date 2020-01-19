@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="global.dclass.team5.DAO.ProgressMapper">
+
+<select id="progress_log" resultType="Progress" parameterType="int">
+	SELECT 
+		TO_CHAR(PROGRESS.PRO_DATE,'YYYY-MM-DD') AS PRO_DATE,MEMBER.NAME,PROGRESS.PROGRESS_PER,PROGRESS.PROGRESSNUM
+	FROM 
+		PROGRESS,MEMBER
+	WHERE 
+		PROGRESS.GROUPBOARDNUM = #{groupBoardNum}
+	AND 
+		MEMBER.ID = PROGRESS.ID
+	ORDER BY
+		 PROGRESS.PRO_DATE
+</select>
+
+<select id="select_group_progress" resultType="Progress" parameterType="int">
+	select 
+		m.id, 
+			case when m.department = 'education' then '教育学研究科'
+				 when m.department = 'economy' then '経済学研究科'
+				 when m.department = 'engineering' then '工学系研究科'
+				 when m.department = 'information' then '情報理工学系研究科'
+				 when m.department = 'frontier science' then '新領域創成科学研究科'
+				 when m.department = 'humanities' then '人文社会系研究科'
+				 when m.department = 'mathematics' then '数理科学研究科'
+				 when m.department = 'culture' then '総合文化研究科'
+				 when m.department = 'agriculture' then '農学生命科学研究科'
+				 when m.department = 'law' then '法学政治学研究科'
+				 when m.department = 'pharmacy' then '薬学系研究科'
+				 when m.department = 'sciences' then '理学系研究科'
+				end as department,
+ 					m.name
+	from
+		 member m ,groupboardinfo i
+	where   
+		 i.groupBoardNum = m.groupBoardNum
+	and
+		 i.groupBoardNum = #{groupBoardNum}
+	order by m.id
+</select>
+
+<select id="select_all_day_avg_progress" resultType="Progress" parameterType="Progress">
+  select 
+       round(SUM(p.progress_per)/30) as progress_per
+	from
+		 progress p, member m ,groupboardinfo i
+        
+	where 
+		 p.groupBoardNum = m.groupBoardNum
+	and 
+		 m.id = p.id
+	and
+		 i.groupBoardNum = #{groupBoardNum}
+	and 
+		 m.groupBoardNum = i.groupBoardNum
+</select>
+
+<!-- 지난 주 월 ~ 일 멤버별 평균 -->
+<select id="select_7_day_avg_progress" resultType="Progress" parameterType="int">
+          select
+    	a.id, nvl(avg(round(b.progress_per)),0) as progress_per
+    from
+	    (select 
+			id, progress_per, pro_date, groupBoardNum
+	    from 
+	    	progress
+	    where
+            (TO_CHAR(pro_date, 'YYYY/MM/DD')
+            BETWEEN TO_CHAR(SYSDATE - (TO_CHAR(SYSDATE, 'D') - 1) - 6, 'YYYY/MM/DD')
+            AND TO_CHAR(SYSDATE - (TO_CHAR(SYSDATE, 'D') - 1), 'YYYY/MM/DD'))
+	    and
+	        groupBoardNum=#{groupBoardNum}) b
+    right outer join 
+  	  (select id from progress where groupBoardNum=#{groupBoardNum}) a on a.id = b.id
+    group by a.id
+    order by a.id
+</select>
+
+ <!-- 지난 주 월 ~ 일 멤버별 평균의 평균 -->
+<select id="all_select_7_day_avg_progress" resultType="int" parameterType="int">
+   select
+ 		avg(nvl(avg(round(b.progress_per)),0)) as progress_per
+    from
+	    (select 
+			id, progress_per, pro_date, groupBoardNum
+	    from 
+	    	progress
+	    where
+	        (TO_CHAR(pro_date, 'YYYY/MM/DD')
+            BETWEEN TO_CHAR(SYSDATE - (TO_CHAR(SYSDATE, 'D') - 1) - 6, 'YYYY/MM/DD')
+            AND TO_CHAR(SYSDATE - (TO_CHAR(SYSDATE, 'D') - 1), 'YYYY/MM/DD'))
+	    and
+	        groupBoardNum=#{groupBoardNum}) b
+    right outer join 
+    	(select id from progress where groupBoardNum = #{groupBoardNum}) a on a.id = b.id
+    group by a.id
+</select>
+
+<insert id="insert_progress" parameterType="Progress">
+	INSERT INTO PROGRESS(
+	    PROGRESSNUM,
+	    GROUPBOARDNUM,
+	    ID,
+	    PROGRESS_PER,
+	    PRO_DATE 
+	)VALUES(
+	   PROGRESS_SEQ.NEXTVAL,
+	   #{groupBoardNum},
+	   #{id},
+	   #{progress_per},
+	   #{pro_date}
+	)
+</insert>
+
+<delete id="delete_progress" parameterType="int">
+DELETE FROM PROGRESS
+WHERE PROGRESSNUM = #{progressNum}
+</delete>
+
+</mapper>

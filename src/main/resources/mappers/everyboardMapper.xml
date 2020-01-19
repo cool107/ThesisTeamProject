@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="global.dclass.team5.DAO.EveryBoardMapper">
+
+	<select id="selectAllEveryBoard" resultType="EveryBoard" parameterType="map">
+		SELECT EVERYBOARDSEQ, ID, EVERYBOARDTITLE, EVERYBOARDCONTENT, EVERYBOARDDATE, EVERYBOARDHITCOUNT, (SELECT COUNT(*) FROM EVERYBOARDCOMMENTS WHERE EVERYBOARDSEQ=e.EVERYBOARDSEQ) as recount, EVERYBOARDORGNAME, EVERYBOARDSAVENAME
+		FROM EVERYBOARD e
+			<choose>
+				<when test="keyField == 'everyBoardTitle'">WHERE EVERYBOARDTITLE LIKE '%' || #{keyWord} || '%'</when>
+				<when test="keyField == 'id'">WHERE ID LIKE '%' || #{keyWord} || '%'</when>
+				<when test="keyField == 'everyBoardContent'">WHERE EVERYBOARDCONTENT LIKE '%' || #{keyWord} || '%'</when>
+			</choose>
+		ORDER BY EVERYBOARDSEQ DESC
+	</select>
+	
+	<select id="getBoard" parameterType="int" resultType="EveryBoard">
+		SELECT EVERYBOARDSEQ, ID, EVERYBOARDTITLE, EVERYBOARDCONTENT, EVERYBOARDDATE, EVERYBOARDHITCOUNT, EVERYBOARDORGNAME, EVERYBOARDSAVENAME
+		FROM EVERYBOARD
+		WHERE EVERYBOARDSEQ = #{everyBoardSeq}
+	</select>
+	
+	<update id="updateHitcount" parameterType="int">
+		UPDATE EVERYBOARD
+		SET EVERYBOARDHITCOUNT = EVERYBOARDHITCOUNT+1
+		WHERE EVERYBOARDSEQ = #{everyBoardSeq}
+	</update>
+	
+	<insert id="insertEveryBoard" parameterType="EveryBoard">
+		INSERT INTO EVERYBOARD(EVERYBOARDSEQ, ID, EVERYBOARDTITLE, EVERYBOARDCONTENT, EVERYBOARDORGNAME, EVERYBOARDSAVENAME)
+		VALUES (EVERYBOARDSEQ.NEXTVAL, #{id}, #{everyBoardTitle}, #{everyBoardContent}, #{everyBoardOrgname}, #{everyBoardSavename})
+	</insert>
+	
+	<select id="selectEveryBoard" parameterType="int" resultType="EveryBoard">
+		SELECT EVERYBOARDSEQ, ID, EVERYBOARDTITLE, EVERYBOARDCONTENT, EVERYBOARDDATE, EVERYBOARDHITCOUNT, EVERYBOARDORGNAME, EVERYBOARDSAVENAME
+		FROM EVERYBOARD
+		WHERE EVERYBOARDSEQ = #{everyBoardSeq}
+	</select>
+	
+	<update id="updateEveryBoard" parameterType="EveryBoard">
+		UPDATE EVERYBOARD 
+		SET EVERYBOARDTITLE = #{everyBoardTitle}, EVERYBOARDCONTENT = #{everyBoardContent}, EVERYBOARDORGNAME = #{everyBoardOrgname}, EVERYBOARDSAVENAME = #{everyBoardSavename}
+		WHERE EVERYBOARDSEQ = #{everyBoardSeq}
+	</update>
+	
+	<update id="fileDelete" parameterType="int">
+		UPDATE EVERYBOARD
+		SET EVERYBOARDORGNAME = null, EVERYBOARDSAVENAME = null
+		WHERE EVERYBOARDSEQ = #{everyBoardSeq}
+	</update>
+	
+	<delete id="deleteEveryBoard" parameterType="int">
+		DELETE FROM EVERYBOARD
+		WHERE EVERYBOARDSEQ = #{everyBoardSeq}
+	</delete>
+	
+	<select id="totalCount" resultType="int" parameterType="map">
+		SELECT count(*)
+		FROM EVERYBOARD
+			<choose>
+				<when test="keyField == 'everyBoardTitle'">WHERE EVERYBOARDTITLE LIKE '%' || #{keyWord} || '%'</when>
+				<when test="keyField == 'id'">WHERE ID LIKE '%' || #{keyWord} || '%'</when>
+				<when test="keyField == 'everyBoardContent'">WHERE EVERYBOARDCONTENT LIKE '%' || #{keyWord} || '%'</when>
+			</choose>
+	</select>
+	
+	<select id="selectAllComment" parameterType="int" resultType="EveryBoardComments">
+		SELECT EVERYBOARDCOMMENTSEQ, EVERYBOARDSEQ, ID, EVERYBOARDCOMMENT, to_char(EVERYBOARDCOMMENTDATE, 'YYYY-mm-dd hh:mi') EVERYBOARDCOMMENTDATE
+		FROM EVERYBOARDCOMMENTS
+		WHERE EVERYBOARDSEQ = #{everyBoardSeq}
+		ORDER BY EVERYBOARDCOMMENTSEQ DESC
+	</select>
+	
+	<insert id="insert_comments" parameterType="EveryBoardComments">
+		INSERT INTO EVERYBOARDCOMMENTS(
+				EVERYBOARDCOMMENTSEQ,
+				EVERYBOARDSEQ,
+				ID,
+				EVERYBOARDCOMMENT
+		)VALUES(
+				EVERYBOARD_COMMENTS_SEQUENCE.NEXTVAL,
+				#{everyBoardSeq},
+				#{id},
+				#{everyBoardComment}			
+		)			
+	</insert>
+	
+	<update id="update_comments" parameterType="EveryBoardComments">
+		UPDATE
+			 EVERYBOARDCOMMENTS
+		SET
+		 	EVERYBOARDCOMMENT = #{everyBoardComment}
+		WHERE
+			 ID = #{id}
+		AND 
+			EVERYBOARDCOMMENTSEQ= #{everyBoardCommentSeq}	
+	</update>
+	
+	<delete id="delete_comments" parameterType="EveryBoardComments">
+			DELETE EVERYBOARDCOMMENTS
+			WHERE EVERYBOARDSEQ = #{everyBoardSeq}
+			AND ID = #{id}
+			AND EVERYBOARDCOMMENTSEQ= #{everyBoardCommentSeq}
+	</delete>
+	
+</mapper>
